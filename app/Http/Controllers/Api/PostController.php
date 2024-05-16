@@ -39,7 +39,7 @@ class PostController extends Controller
         }
 
         $posts = $postQuery->orderBy($sortBy, $sortOrder)->paginate(10);
-        
+
         if ($posts->isEmpty()) {
             return response()->json([
                 'status' => 404,
@@ -222,10 +222,13 @@ class PostController extends Controller
 
     public function getClientPostDetail($postSlug)
     {
+        // $post = Post::where('url', $postSlug)->with(['comments' => function ($query) {
+        //     $query->whereNull('parent_comment_id')->with('comments', 'user');
+        // }])->first();
         $post = Post::where('url', $postSlug)->with(['comments' => function ($query) {
-            $query->whereNull('parent_comment_id')->with('comments','user');
+            $query->whereNull('parent_comment_id')->with(['user', 'comments.user', 'comments.comment.user']);
         }])->first();
-       
+
         if ($post == null) {
             return response()->json([
                 'status' => 404,

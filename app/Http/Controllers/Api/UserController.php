@@ -144,8 +144,8 @@ class UserController extends Controller
                 'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:7128',
             ];
 
-            if($request->username != $user->username){
-                $validatorArray['username']=$validatorArray['username'].'|unique:users';
+            if ($request->username != $user->username) {
+                $validatorArray['username'] = $validatorArray['username'] . '|unique:users';
             }
 
             $validator = Validator::make($request->all(), $validatorArray);
@@ -205,9 +205,9 @@ class UserController extends Controller
     }
     public function deleteUser($userId)
     {
-        if($userId == Auth::id()){
+        if ($userId == Auth::id()) {
             return response()->json([
-                'message'=>'Cannot delete yourself',
+                'message' => 'Cannot delete yourself',
             ]);
         }
 
@@ -227,7 +227,8 @@ class UserController extends Controller
             'message' => 'user deleted successfully'
         ], 200);
     }
-    public function deleteMultiUser(Request $request){
+    public function deleteMultiUser(Request $request)
+    {
         if ($request->has('userIds')) {
             $userIds = $request->input('userIds');
             $users = User::whereIn('id', $userIds)->delete();
@@ -275,8 +276,8 @@ class UserController extends Controller
                 'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:7128',
             ];
 
-            if($request->username != $user->username){
-                $validatorArray['username']=$validatorArray['username'].'|unique:users';
+            if ($request->username != $user->username) {
+                $validatorArray['username'] = $validatorArray['username'] . '|unique:users';
             }
 
             $validator = Validator::make($request->all(), $validatorArray);

@@ -8,12 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\User;
-use Illuminate\Contracts\Session\Session;
-use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -163,6 +160,7 @@ class AuthController extends Controller
 
 
         Auth::logout();
+        session()->flush();
         // User::where('id',Auth::id())->update(['remember_token'=>null]);
 
         return response()->json([

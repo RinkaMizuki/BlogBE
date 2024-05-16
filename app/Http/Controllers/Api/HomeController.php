@@ -52,11 +52,17 @@ class HomeController extends Controller
             return $post;
         });
 
+        if ($request->has('perPage')) {
+            $perPage = $request->perPage;
+        } else {
+            $perPage = 6;
+        }
+
         $allBlogPosts = DB::table('posts')
             ->join('categories', 'posts.cat_id', '=', 'categories.id')
             ->select('posts.*', 'categories.cat_title')
             ->orderBy('posts.created_at', 'desc')
-            ->paginate(6);
+            ->paginate($perPage);
 
         $allBlogPosts->map(function ($post) {
             $post->created_at = Carbon::parse($post->created_at)->format('l, j M Y');

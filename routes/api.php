@@ -36,7 +36,7 @@ Route::get('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 //Client
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 //categories-list view
 Route::get('/category', function () {
     redirect(route('home'));

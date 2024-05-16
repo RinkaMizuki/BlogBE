@@ -55,6 +55,7 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
+        'cors' => \App\Http\Middleware\Cors::class,
         'isLoggedIn' => \App\Http\Middleware\AuthCheck::class,
         'isAdmin' => \App\Http\Middleware\RoleCheck::class,
         'alreadyLoggedIn' => \App\Http\Middleware\AlreadyLoggedIn::class,
