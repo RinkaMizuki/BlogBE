@@ -313,8 +313,10 @@ class UserController extends Controller
                     'role_id' => $user->role_id == 1 ? 1 : 2,
                 ]);
 
+                $newUser = User::where('id', $user->id)->first();
                 return response()->json([
                     'status' => 200,
+                    'user' => $newUser,
                     'message' => 'User updated successfully'
                 ], 200);
             }

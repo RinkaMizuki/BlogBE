@@ -88,12 +88,11 @@ class CommentController extends Controller
                 ], 200);
             }
         }
-       
     }
     public function replyComment(Request $request, $postId, $parentCommentId)
     {
         $post = Post::where('id', $postId)->with(['comments' => function ($query) {
-            $query->whereNull('parent_comment_id')->with('comments','user');
+            $query->whereNull('parent_comment_id')->with('comments', 'user');
         }])->first();
         if ($post == null) {
             return response()->json([
@@ -117,23 +116,25 @@ class CommentController extends Controller
                 $comment->parent_comment_id = $parentCommentId;
                 $comment->save();
 
+                $newComment = Comment::with('user', 'comments')->where('id', $comment->id)->first();
                 return response()->json([
                     'status' => 200,
                     'message' => 'Reply successfully',
-                    'post' => $post,
+                    'comment' => $newComment,
                 ], 200);
             }
         }
     }
-    public function likeComment(Request $request, $commentLikedId){
+    public function likeComment(Request $request, $commentLikedId)
+    {
         $comment = Comment::find($commentLikedId);
         $comment->like = $comment->like + 1;
         $comment->save(); // Lưu lại thay đổi
         return response()->json([
-            'status'=>200,
-            'message'=>'Liked',
-            'comment'=>$comment,
-        ],200);
+            'status' => 200,
+            'message' => 'Liked',
+            'comment' => $comment,
+        ], 200);
     }
     public function deleteComment($commentId)
     {
@@ -153,10 +154,11 @@ class CommentController extends Controller
             'message' => 'Comment deleted successfully'
         ], 200);
     }
-    public function deleteMultiComment(Request $request){
+    public function deleteMultiComment(Request $request)
+    {
         if ($request->has('commentIds')) {
             $commentIds = $request->input('commentIds');
-            $comments = Comment::with('post','user')->whereIn('id', $commentIds)->delete();
+            $comments = Comment::with('post', 'user')->whereIn('id', $commentIds)->delete();
             return response()->json([
                 'status' => 200,
                 'comment_deleted' => $comments,

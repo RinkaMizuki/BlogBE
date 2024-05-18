@@ -181,10 +181,10 @@ class AuthController extends Controller
         } else {
             $token = Hash::make($email);
             Cache::put($email, $token, now()->addSeconds(50));
-            $message = $request->root() . '/api/reset-password?token=' . $token . '&email=' . $email;
-            $baseUrl = $request->root();
+            $origin = request()->headers->get('origin');
+            $message =  $origin . '/reset-password?token=' . $token . '&email=' . $email;
             $data = [
-                'url' => $baseUrl,
+                'url' =>  $origin,
                 'message' => $message,
             ];
             Mail::to($email)->send(new UserResetPassword($data));
