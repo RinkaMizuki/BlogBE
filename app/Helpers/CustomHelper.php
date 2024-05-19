@@ -51,16 +51,28 @@ if (!function_exists('getLoginUser')) {
         return $result;
     }
 
+    function countNestedReplies($comment)
+    {
+        $count = $comment->comments->count();
+
+        foreach ($comment->comments as $reply) {
+            $count += countNestedReplies($reply);
+        }
+
+        return $count;
+    }
+
     function getNestedRepliesWithUser($comments)
     {
         $nestedReplies = collect();
 
         foreach ($comments as $comment) {
+            $comment->repliesCount = countNestedReplies($comment);
             if ($comment->comments->isNotEmpty()) {
                 $nestedReplies = $nestedReplies->merge($comment->comments);
                 $nestedReplies = $nestedReplies->merge(getNestedRepliesWithUser($comment->comments));
             }
-            // Lấy thông tin user của comment reply
+
 
             // Lấy thông tin user từ parent comment
             $parentCommentId = $comment->parent_comment_id;
@@ -73,12 +85,15 @@ if (!function_exists('getLoginUser')) {
                     }
                 }
             }
-
             $userOfReply = $comment->user;
             if ($userOfReply) {
                 $comment->user = $userOfReply;
             }
         }
+
+        $nestedReplies = $nestedReplies->sortByDesc(function ($comment) {
+            return $comment->created_at;
+        });
 
         return $nestedReplies;
     }
