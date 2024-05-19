@@ -171,4 +171,11 @@ class CommentController extends Controller
             ], 404);
         }
     }
+
+    public function getClientPostComment(Request $request, $postId)
+    {
+        $comments = Comment::where('post_id', $postId)->with('userOfComment', 'parentComment.userOfComment')->get();
+        $comments = commentDataTree($comments);
+        return $comments;
+    }
 }

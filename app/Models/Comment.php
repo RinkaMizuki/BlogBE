@@ -15,7 +15,7 @@ class Comment extends Model
         'parent_comment_id',
         'created_at',
     ];
-    function user()
+    function userOfComment()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
@@ -27,7 +27,7 @@ class Comment extends Model
     {
         return $this->hasMany(Comment::class, 'parent_comment_id');
     }
-    function comment()
+    function parentComment()
     {
         return $this->belongsTo(Comment::class, 'parent_comment_id', 'id');
     }

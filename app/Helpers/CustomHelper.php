@@ -34,12 +34,12 @@ if (!function_exists('getLoginUser')) {
         foreach ($data as $item) {
             if ($item->parent_comment_id == $parentId) {
                 // $parentComment = Comment
-                $user = User::find($item->id);
-                if ($user) {
-                    $item->userComment = $user->username;
-                } else {
-                    $item->user = null;
-                }
+                // $user = User::find($item->id);
+                // if ($user) {
+                //     $item->userComment = $user->username;
+                // } else {
+                //     $item->user = null;
+                // }
                 $item->level = $level;
                 $result[] = $item;
                 if (hasChild($data, $item->id)) {

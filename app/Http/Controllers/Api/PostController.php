@@ -222,18 +222,15 @@ class PostController extends Controller
 
     public function getClientPostDetail($postSlug)
     {
-        $post = Post::where('url', $postSlug)->with(['comments' => function ($query) {
-            $query->whereNull('parent_comment_id')->with('comments.user', 'user', 'comment.user');
-        }])->first();
         // $post = Post::where('url', $postSlug)->with(['comments' => function ($query) {
-        //     $query->whereNull('parent_comment_id')->with(['user', 'comments.user', 'comments.comment.user', 'comment.comments']);
+        //     $query->whereNull('parent_comment_id')->with('comments.user', 'user', 'comment.user');
         // }])->first();
-
-        if ($post) {
-            $comments = $post->comments;
-            $nestedReplies = getNestedRepliesWithUser($comments);
-            $post->comments = $nestedReplies;
-        }
+        $post = Post::where('url', $postSlug)->with('category:cat_title')->first();
+        // if ($post) {
+        //     $comments = $post->comments;
+        //     $nestedReplies = getNestedRepliesWithUser($comments);
+        //     $post->comments = $nestedReplies;
+        // }
 
         if ($post == null) {
             return response()->json([

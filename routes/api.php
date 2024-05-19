@@ -48,6 +48,8 @@ Route::get('/posts', function () {
 });
 //detail-post view
 Route::get('/posts/{post_slug}', [PostController::class, 'getClientPostDetail']);
+//comment-post view
+Route::get('/posts/{post_id}/comments', [CommentController::class, 'getClientPostComment']);
 
 //login-needed
 Route::middleware('isLoggedIn')->group(function () {
