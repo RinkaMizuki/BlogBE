@@ -57,6 +57,8 @@ Route::middleware('isLoggedIn')->group(function () {
     Route::post('/posts/{post_id}/{comment_parent_id}/reply-comment', [CommentController::class, 'replyComment']);
     //like-comment
     Route::post('/posts/{comment_liked_id}/like', [CommentController::class, 'likeComment']);
+    //unlike-comment
+    Route::post('/posts/{comment_liked_id}/unlike', [CommentController::class, 'unlikeComment']);
 
     Route::prefix('profile')->group(function () {
         //client-profile-update-view

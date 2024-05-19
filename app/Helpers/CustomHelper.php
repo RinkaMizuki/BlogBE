@@ -3,6 +3,8 @@
 use App\Models\Comment;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
 if (!function_exists('getLoginUser')) {
@@ -68,6 +70,14 @@ if (!function_exists('getLoginUser')) {
 
         foreach ($comments as $comment) {
             $comment->repliesCount = countNestedReplies($comment);
+            if (Auth::check()) {
+                $comment->is_liked = DB::table('user_comment')
+                    ->where('user_id', Auth::id())
+                    ->where('comment_id', $comment->id)
+                    ->pluck('is_liked')
+                    ->first() == 1 ? true : false;
+            }
+
             if ($comment->comments->isNotEmpty()) {
                 $nestedReplies = $nestedReplies->merge($comment->comments);
                 $nestedReplies = $nestedReplies->merge(getNestedRepliesWithUser($comment->comments));

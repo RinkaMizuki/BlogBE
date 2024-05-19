@@ -223,7 +223,9 @@ class PostController extends Controller
     public function getClientPostDetail($postSlug)
     {
         $post = Post::where('url', $postSlug)->with(['comments' => function ($query) {
-            $query->orderBy('created_at', 'asc')->whereNull('parent_comment_id')->with('comments.user', 'user', 'comment.user');
+            $query->whereNull('parent_comment_id')
+                ->orderByRaw('created_at ASC')
+                ->with('comments.user', 'user', 'comment.user');
         }])->first();
         // $post = Post::where('url', $postSlug)->with(['comments' => function ($query) {
         //     $query->whereNull('parent_comment_id')->with(['user', 'comments.user', 'comments.comment.user', 'comment.comments']);

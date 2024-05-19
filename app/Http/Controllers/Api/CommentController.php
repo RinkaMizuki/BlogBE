@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
-
+use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
@@ -84,7 +84,7 @@ class CommentController extends Controller
                 return response()->json([
                     'status' => 200,
                     'message' => 'Comment added successfully',
-                    'post' => $post,
+                    'comment' => $comment,
                 ], 200);
             }
         }
@@ -130,9 +130,55 @@ class CommentController extends Controller
         $comment = Comment::find($commentLikedId);
         $comment->like = $comment->like + 1;
         $comment->save(); // Lưu lại thay đổi
+
+        $existingRecord = DB::table('user_comment')
+            ->where('user_id', Auth::id())
+            ->where('comment_id', $commentLikedId)
+            ->first();
+
+        // Nếu đã có bản ghi tồn tại, cập nhật lại is_liked
+        if ($existingRecord) {
+            DB::table('user_comment')
+                ->where('user_id', Auth::id())
+                ->where('comment_id', $commentLikedId)
+                ->update(['is_liked' => true]);
+        } else {
+            // Nếu chưa có bản ghi, thêm mới vào bảng user_comment
+            DB::table('user_comment')->insert([
+                'user_id' => Auth::id(),
+                'comment_id' => $commentLikedId,
+                'is_liked' => true,
+            ]);
+        }
+
         return response()->json([
             'status' => 200,
             'message' => 'Liked',
+            'comment' => $comment,
+        ], 200);
+    }
+    public function unlikeComment(Request $request, $commentLikedId)
+    {
+        $comment = Comment::find($commentLikedId);
+        $comment->like = $comment->like - 1;
+        $comment->save();
+
+        $existingRecord = DB::table('user_comment')
+            ->where('user_id', Auth::id())
+            ->where('comment_id', $commentLikedId)
+            ->first();
+
+        // Nếu đã có bản ghi tồn tại, cập nhật lại is_liked
+        if ($existingRecord) {
+            DB::table('user_comment')
+                ->where('user_id', Auth::id())
+                ->where('comment_id', $commentLikedId)
+                ->update(['is_liked' => false]);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Unliked',
             'comment' => $comment,
         ], 200);
     }
